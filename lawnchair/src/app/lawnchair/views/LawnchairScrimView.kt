@@ -9,6 +9,9 @@ import com.android.launcher3.util.SystemUiController
 import com.android.launcher3.util.Themes
 import com.android.launcher3.views.ScrimView
 
+/**
+ * 简单的遮罩层，用于绘制纯色
+ */
 class LawnchairScrimView(context: Context, attrs: AttributeSet?) : ScrimView(context, attrs) {
 
     private var drawerOpacity = 0f

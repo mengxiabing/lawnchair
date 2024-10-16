@@ -37,6 +37,7 @@ import com.android.launcher3.util.SystemUiController;
 import java.util.ArrayList;
 
 /**
+ * 简单的遮罩层，用于绘制纯色
  * Simple scrim which draws a flat color
  */
 public class ScrimView extends View implements Insettable {

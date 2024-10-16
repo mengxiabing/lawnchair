@@ -12,8 +12,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.android.launcher3.LauncherRootView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.launcher3.LauncherRootView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     android:id="@+id/launcher"
     android:layout_width="match_parent"
@@ -28,14 +27,15 @@
         android:clipToPadding="false"
         android:importantForAccessibility="no">
 
+        <!--没搞明白作用-->
         <com.android.launcher3.views.AccessibilityActionsView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/home_screen"
-            />
+            android:contentDescription="@string/home_screen" />
 
         <!-- The workspace contains 5 screens of cells -->
         <!-- DO NOT CHANGE THE ID -->
+        <!--类似ViewPager-->
         <com.android.launcher3.Workspace
             android:id="@+id/workspace"
             android:layout_width="match_parent"
@@ -44,11 +44,13 @@
             android:theme="@style/HomeScreenElementTheme"
             launcher:pageIndicator="@+id/page_indicator" />
 
+        <!--没搞明白作用-->
         <!-- DO NOT CHANGE THE ID -->
         <include
             android:id="@+id/hotseat"
             layout="@layout/hotseat" />
 
+        <!--没搞明白作用-->
         <!-- Keep these behind the workspace so that they are not visible when
          we go into AllApps -->
         <com.android.launcher3.pageindicators.WorkspacePageIndicator
@@ -58,20 +60,24 @@
             android:layout_gravity="bottom|center_horizontal"
             android:theme="@style/HomeScreenElementTheme" />
 
+        <!--没搞明白作用-->
         <include
             android:id="@+id/drop_target_bar"
             layout="@layout/drop_target_bar" />
 
+        <!--上滑显示全部应用页面的背景-->
         <app.lawnchair.views.LawnchairScrimView
+            android:id="@+id/scrim_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/scrim_view"
             android:background="@android:color/transparent" />
 
+        <!--没搞明白作用-->
         <include
             android:id="@+id/overview_panel"
             layout="@layout/overview_panel" />
 
+        <!--没搞明白作用-->
         <include
             android:id="@+id/apps_view"
             layout="@layout/all_apps"
