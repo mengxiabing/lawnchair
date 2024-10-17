@@ -205,7 +205,7 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
 
     @Override
     public void onLongPress(MotionEvent event) {
-        maybeShowMenu();
+//        maybeShowMenu();
     }
 
     private void maybeShowMenu() {

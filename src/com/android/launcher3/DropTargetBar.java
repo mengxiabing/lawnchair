@@ -310,7 +310,7 @@ public class DropTargetBar extends FrameLayout
 
             float finalAlpha = mVisible ? 1 : 0;
             if (Float.compare(getAlpha(), finalAlpha) != 0) {
-                setVisibility(View.VISIBLE);
+//                setVisibility(View.VISIBLE);
                 mCurrentAnimation = animate().alpha(finalAlpha)
                         .setInterpolator(DEFAULT_INTERPOLATOR)
                         .setDuration(DEFAULT_DRAG_FADE_DURATION)
@@ -325,7 +325,7 @@ public class DropTargetBar extends FrameLayout
      */
     @Override
     public void onDragStart(DropTarget.DragObject dragObject, DragOptions options) {
-        animateToVisibility(true);
+        animateToVisibility(false);
     }
 
     /**
