@@ -363,7 +363,6 @@ public abstract class ArrowPopup<T extends Context & ActivityContext>
     public void showExcludeArrow() {
         setupForDisplay();
         assignMarginsAndBackgrounds(this);
-        animateOpen();
     }
 
     protected void setupForDisplay() {
