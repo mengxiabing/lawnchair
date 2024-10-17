@@ -15,7 +15,6 @@ local.properties
 build
 .DS_Store
 keystore.properties
-*.jks
 __pycache__
 .vscode
 .fleet
