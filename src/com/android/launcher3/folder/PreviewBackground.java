@@ -37,6 +37,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Shader;
 import android.util.Property;
@@ -277,7 +278,12 @@ public class PreviewBackground extends CellLayout.DelegatedCellDrawing {
     public void drawBackground(Canvas canvas) {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(getBgColor());
-
+//        int offsetX = getOffsetX();
+//        int offsetY = getOffsetY();
+//        float radius = getScaledRadius();
+//        float shadowRadius = radius + mStrokeWidth;
+//        canvas.drawRoundRect(new RectF(offsetX - mStrokeWidth, offsetY,
+//            offsetX + radius + shadowRadius, offsetY + shadowRadius + shadowRadius), 20.0f, 20.0f, mPaint);
         getShape().drawShape(canvas, getOffsetX(), getOffsetY(), getScaledRadius(), mPaint);
         drawShadow(canvas);
     }

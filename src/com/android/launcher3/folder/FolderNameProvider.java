@@ -120,17 +120,21 @@ public class FolderNameProvider implements ResourceBasedOverride {
 
         // If all the icons are from same package (e.g., main icon, shortcut, shortcut)
         // Then, suggest the package's title as the folder name
-        Set<String> packageNames = workspaceItemInfos.stream()
-                .map(WorkspaceItemInfo::getTargetComponent)
-                .filter(Objects::nonNull)
-                .map(ComponentName::getPackageName)
-                .collect(Collectors.toSet());
+        try {
+            Set<String> packageNames = workspaceItemInfos.stream()
+                    .map(WorkspaceItemInfo::getTargetComponent)
+                    .filter(Objects::nonNull)
+                    .map(ComponentName::getPackageName)
+                    .collect(Collectors.toSet());
 
-        if (packageNames.size() == 1) {
-            Optional<AppInfo> info = getAppInfoByPackageName(packageNames.iterator().next());
-            // Place it as first viable suggestion and shift everything else
-            info.ifPresent(i -> setAsFirstSuggestion(
-                    nameInfos, i.title == null ? "" : i.title.toString()));
+            if (packageNames.size() == 1) {
+                Optional<AppInfo> info = getAppInfoByPackageName(packageNames.iterator().next());
+                // Place it as first viable suggestion and shift everything else
+                info.ifPresent(i -> setAsFirstSuggestion(
+                        nameInfos, i.title == null ? "" : i.title.toString()));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         if (DEBUG) {
             Log.d(TAG, "getSuggestedFolderName:" + nameInfos.toString());
