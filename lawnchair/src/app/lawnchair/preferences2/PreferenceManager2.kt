@@ -583,12 +583,12 @@ class PreferenceManager2 private constructor(private val context: Context) : Pre
 
     val doubleTapGestureHandler = serializablePreference<GestureHandlerConfig>(
         key = stringPreferencesKey("double_tap_gesture_handler"),
-        defaultValue = GestureHandlerConfig.Sleep,
+        defaultValue = GestureHandlerConfig.NoOp,
     )
 
     val swipeUpGestureHandler = serializablePreference<GestureHandlerConfig>(
         key = stringPreferencesKey("swipe_up_gesture_handler"),
-        defaultValue = GestureHandlerConfig.OpenAppDrawer,
+        defaultValue = GestureHandlerConfig.Recents,
     )
 
     val swipeDownGestureHandler = serializablePreference<GestureHandlerConfig>(

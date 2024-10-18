@@ -47,6 +47,7 @@ import com.android.launcher3.BaseActivity
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.GestureNavContract
 import com.android.launcher3.LauncherAppState
+import com.android.launcher3.LauncherFiles
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
@@ -70,6 +71,7 @@ import com.android.systemui.shared.system.QuickStepContract
 import com.kieronquinn.app.smartspacer.sdk.client.SmartspacerClient
 import com.patrykmichalik.opto.core.firstBlocking
 import com.patrykmichalik.opto.core.onEach
+import com.patrykmichalik.opto.core.setBlocking
 import dev.kdrag0n.monet.theme.ColorScheme
 import java.util.stream.Stream
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -184,6 +186,11 @@ class LawnchairLauncher : QuickstepLauncher() {
         showQuickstepWarningIfNecessary()
 
         reloadIconsIfNeeded()
+        //禁用上滑手势
+        preferenceManager2.swipeUpGestureHandler.setBlocking(GestureHandlerConfig.NoOp)
+//        getSharedPreferences(
+//            "preferences", MODE_PRIVATE,
+//        ).edit().putString("swipe_up_gesture_handler","noOp").commit()
     }
 
     override fun collectStateHandlers(out: MutableList<StateManager.StateHandler<*>>) {
@@ -315,21 +322,23 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onResume()
         restartIfPending()
 
-        dragLayer.viewTreeObserver.addOnDrawListener(object : ViewTreeObserver.OnDrawListener {
-            private var handled = false
+        dragLayer.viewTreeObserver.addOnDrawListener(
+            object : ViewTreeObserver.OnDrawListener {
+                private var handled = false
 
-            override fun onDraw() {
-                if (handled) {
-                    return
-                }
-                handled = true
+                override fun onDraw() {
+                    if (handled) {
+                        return
+                    }
+                    handled = true
 
-                dragLayer.post {
-                    dragLayer.viewTreeObserver.removeOnDrawListener(this)
+                    dragLayer.post {
+                        dragLayer.viewTreeObserver.removeOnDrawListener(this)
+                    }
+                    depthController
                 }
-                depthController
-            }
-        })
+            },
+        )
     }
 
     override fun onDestroy() {

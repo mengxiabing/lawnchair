@@ -49,14 +49,14 @@ import com.android.launcher3.util.TouchController;
  * TouchController for handling state changes
  */
 public abstract class AbstractStateChangeTouchController
-        implements TouchController, SingleAxisSwipeDetector.Listener {
+    implements TouchController, SingleAxisSwipeDetector.Listener {
 
     protected final Launcher mLauncher;
     protected final SingleAxisSwipeDetector mDetector;
     protected final SingleAxisSwipeDetector.Direction mSwipeDirection;
 
     protected final AnimatorListener mClearStateOnCancelListener =
-            newCancelListener(this::clearState);
+        newCancelListener(this::clearState);
     private final FlingBlockCheck mFlingBlockCheck = new FlingBlockCheck();
 
     protected int mStartContainerType;
@@ -83,9 +83,30 @@ public abstract class AbstractStateChangeTouchController
     }
 
     protected abstract boolean canInterceptTouch(MotionEvent ev);
-
+    float initialTouchY = 0;//add by Xu-24 : Record the initial position of the touch swipe
     @Override
     public boolean onControllerInterceptTouchEvent(MotionEvent ev) {
+        //start add by Xu-24: If you swipe up below the bottom height y of the screen, the app list is not pulled up
+        final int screenHeight = mLauncher.getResources().getDisplayMetrics().heightPixels;
+        final float startY = ev.getY(); // Gets the Y position where the slide begins
+        // The height of the bottom of the screen y, according to the distance of the bottom of the screen y, the pull-up event will not pull out the list of apps
+        final float y = screenHeight * 0.18f;
+        final float thresholdY = screenHeight - y; // Allows pull-up to bring up the maximum coordinates of the app list
+
+        // In the case of ACTION_DOWN events, record the location of the first touch
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            initialTouchY = startY;
+        }
+
+        // If it's a ACTION_MOVE event, determine the direction of the slide
+        if (ev.getAction() == MotionEvent.ACTION_MOVE) {
+            float deltaY = startY - initialTouchY; // Calculate the shift difference
+            // If you swipe up below the bottom height y of the screen, the app list is not pulled up
+            if (initialTouchY > thresholdY && deltaY < 0) {
+                return false;
+            }
+        }
+        //end by Xu-24
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             mNoIntercept = !canInterceptTouch(ev);
             if (mNoIntercept) {
@@ -108,7 +129,7 @@ public abstract class AbstractStateChangeTouchController
                 }
             }
             mDetector.setDetectableScrollConditions(
-                    directionsToDetectScroll, ignoreSlopWhenSettling);
+                directionsToDetectScroll, ignoreSlopWhenSettling);
         }
 
         if (mNoIntercept) {
@@ -145,13 +166,13 @@ public abstract class AbstractStateChangeTouchController
      * that direction, returns fromState.
      */
     protected abstract LauncherState getTargetState(LauncherState fromState,
-            boolean isDragTowardPositive);
+                                                    boolean isDragTowardPositive);
 
     protected abstract float initCurrentAnimation();
 
     private boolean reinitCurrentAnimation(boolean reachedToState, boolean isDragTowardPositive) {
         LauncherState newFromState = mFromState == null ? mLauncher.getStateManager().getState()
-                : reachedToState ? mToState : mFromState;
+            : reachedToState ? mToState : mFromState;
         LauncherState newToState = getTargetState(newFromState, isDragTowardPositive);
 
         onReinitToState(newToState);
@@ -203,7 +224,7 @@ public abstract class AbstractStateChangeTouchController
         float progress = deltaProgress + mStartProgress;
         updateProgress(progress);
         boolean isDragTowardPositive = mSwipeDirection.isPositive(
-                displacement - mDisplacementShift);
+            displacement - mDisplacementShift);
         if (progress <= 0) {
             if (reinitCurrentAnimation(false, isDragTowardPositive)) {
                 mDisplacementShift = displacement;
@@ -262,7 +283,7 @@ public abstract class AbstractStateChangeTouchController
      * Returns animation config for state transition between provided states
      */
     protected StateAnimationConfig getConfigForStates(
-            LauncherState fromState, LauncherState toState) {
+        LauncherState fromState, LauncherState toState) {
         return new StateAnimationConfig();
     }
 
@@ -287,24 +308,24 @@ public abstract class AbstractStateChangeTouchController
         final float interpolatedProgress = mCurrentAnimation.getInterpolatedProgress();
         if (fling) {
             targetState =
-                    Float.compare(Math.signum(velocity), Math.signum(mProgressMultiplier)) == 0
-                            ? mToState : mFromState;
+                Float.compare(Math.signum(velocity), Math.signum(mProgressMultiplier)) == 0
+                    ? mToState : mFromState;
             // snap to top or bottom using the release velocity
         } else {
             float successTransitionProgress = SUCCESS_TRANSITION_PROGRESS;
             if (mLauncher.getDeviceProfile().isTablet
-                    && (mToState == ALL_APPS || mFromState == ALL_APPS)) {
+                && (mToState == ALL_APPS || mFromState == ALL_APPS)) {
                 successTransitionProgress = TABLET_BOTTOM_SHEET_SUCCESS_TRANSITION_PROGRESS;
             } else if (!mLauncher.getDeviceProfile().isTablet
-                    && mToState == ALL_APPS && mFromState == NORMAL) {
+                && mToState == ALL_APPS && mFromState == NORMAL) {
                 successTransitionProgress = AllAppsSwipeController.ALL_APPS_STATE_TRANSITION_MANUAL;
             } else if (!mLauncher.getDeviceProfile().isTablet
-                    && mToState == NORMAL && mFromState == ALL_APPS) {
+                && mToState == NORMAL && mFromState == ALL_APPS) {
                 successTransitionProgress =
-                        1 - AllAppsSwipeController.ALL_APPS_STATE_TRANSITION_MANUAL;
+                    1 - AllAppsSwipeController.ALL_APPS_STATE_TRANSITION_MANUAL;
             }
             targetState =
-                    (interpolatedProgress > successTransitionProgress) ? mToState : mFromState;
+                (interpolatedProgress > successTransitionProgress) ? mToState : mFromState;
         }
 
         final float endProgress;
@@ -312,7 +333,7 @@ public abstract class AbstractStateChangeTouchController
         final long duration;
         // Increase the duration if we prevented the fling, as we are going against a high velocity.
         final int durationMultiplier = blockedFling && targetState == mFromState
-                ? LauncherAnimUtils.blockedFlingDurationFactor(velocity) : 1;
+            ? LauncherAnimUtils.blockedFlingDurationFactor(velocity) : 1;
 
         if (targetState == mToState) {
             endProgress = 1;
@@ -321,9 +342,9 @@ public abstract class AbstractStateChangeTouchController
                 startProgress = 1;
             } else {
                 startProgress = Utilities.boundToRange(progress
-                        + progressVelocity * getSingleFrameMs(mLauncher), 0f, 1f);
+                    + progressVelocity * getSingleFrameMs(mLauncher), 0f, 1f);
                 duration = BaseSwipeDetector.calculateDuration(velocity,
-                        endProgress - Math.max(progress, 0)) * durationMultiplier;
+                    endProgress - Math.max(progress, 0)) * durationMultiplier;
             }
         } else {
             // Let the state manager know that the animation didn't go to the target state,
@@ -337,9 +358,9 @@ public abstract class AbstractStateChangeTouchController
                 startProgress = 0;
             } else {
                 startProgress = Utilities.boundToRange(progress
-                        + progressVelocity * getSingleFrameMs(mLauncher), 0f, 1f);
+                    + progressVelocity * getSingleFrameMs(mLauncher), 0f, 1f);
                 duration = BaseSwipeDetector.calculateDuration(velocity,
-                        Math.min(progress, 1) - endProgress) * durationMultiplier;
+                    Math.min(progress, 1) - endProgress) * durationMultiplier;
             }
         }
         mCurrentAnimation.setEndAction(() -> onSwipeInteractionCompleted(targetState));
@@ -359,9 +380,9 @@ public abstract class AbstractStateChangeTouchController
     }
 
     protected void updateSwipeCompleteAnimation(ValueAnimator animator, long expectedDuration,
-            LauncherState targetState, float velocity, boolean isFling) {
+                                                LauncherState targetState, float velocity, boolean isFling) {
         animator.setDuration(expectedDuration)
-                .setInterpolator(scrollInterpolatorForVelocity(velocity));
+            .setInterpolator(scrollInterpolatorForVelocity(velocity));
     }
 
     protected void onSwipeInteractionCompleted(LauncherState targetState) {
@@ -380,12 +401,12 @@ public abstract class AbstractStateChangeTouchController
             // If we're already in the target state, don't jump to it at the end of the animation in
             // case the user started interacting with it before the animation finished.
             mLauncher.getStateManager().goToState(targetState, false /* animated */,
-                    forEndCallback(() -> logReachedState(targetState)));
+                forEndCallback(() -> logReachedState(targetState)));
         } else {
             logReachedState(targetState);
         }
         mLauncher.getRootView().getSysUiScrim().getSysUIMultiplier().animateToValue(1f)
-                .setDuration(0).start();
+            .setDuration(0).start();
     }
 
     private void logReachedState(LauncherState targetState) {
@@ -394,17 +415,17 @@ public abstract class AbstractStateChangeTouchController
         }
         // Transition complete. log the action
         mLauncher.getStatsLogManager().logger()
-                .withSrcState(mStartState.statsLogOrdinal)
-                .withDstState(targetState.statsLogOrdinal)
-                .withContainerInfo(LauncherAtom.ContainerInfo.newBuilder()
-                        .setWorkspace(
-                                LauncherAtom.WorkspaceContainer.newBuilder()
-                                        .setPageIndex(mLauncher.getWorkspace().getCurrentPage()))
-                        .build())
-                .log(StatsLogManager.getLauncherAtomEvent(mStartState.statsLogOrdinal,
-                            targetState.statsLogOrdinal, mToState.ordinal > mFromState.ordinal
-                                    ? LAUNCHER_UNKNOWN_SWIPEUP
-                                    : LAUNCHER_UNKNOWN_SWIPEDOWN));
+            .withSrcState(mStartState.statsLogOrdinal)
+            .withDstState(targetState.statsLogOrdinal)
+            .withContainerInfo(LauncherAtom.ContainerInfo.newBuilder()
+                .setWorkspace(
+                    LauncherAtom.WorkspaceContainer.newBuilder()
+                        .setPageIndex(mLauncher.getWorkspace().getCurrentPage()))
+                .build())
+            .log(StatsLogManager.getLauncherAtomEvent(mStartState.statsLogOrdinal,
+                targetState.statsLogOrdinal, mToState.ordinal > mFromState.ordinal
+                    ? LAUNCHER_UNKNOWN_SWIPEUP
+                    : LAUNCHER_UNKNOWN_SWIPEDOWN));
     }
 
     protected void clearState() {
