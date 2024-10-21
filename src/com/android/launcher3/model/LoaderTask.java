@@ -50,6 +50,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -241,6 +242,9 @@ public class LoaderTask implements Runnable {
 
             // second step
             Trace.beginSection("LoadAllApps");
+            // --------新增的方法start--------
+            binderAppsToWorkspace();
+            // --------end------------------
             List<LauncherActivityInfo> allActivityList;
             try {
                 allActivityList = loadAllApps();
@@ -962,6 +966,7 @@ public class LoaderTask implements Runnable {
                         appInfo, app, /* useLowResIcon= */ false));
                 mBgAllAppsList.add(
                         appInfo, app, !enableBulkLoading);
+                logASplit("loadAllApps：" + app.getComponentName().getPackageName());
             }
             allActivityList.addAll(apps);
         }
@@ -1095,4 +1100,27 @@ public class LoaderTask implements Runnable {
             Log.d(TAG, label);
         }
     }
+
+    private void binderAppsToWorkspace() {
+        Context context = mApp.getContext();
+        ArrayList<Pair<ItemInfo, Object>> iteminfo_list = new ArrayList<>();
+        final List<UserHandle> profiles = mUserManager.getUserProfiles();
+        for (UserHandle user : profiles) {
+            final List<LauncherActivityInfo> apps = mLauncherApps.getActivityList(null, user);
+            ArrayList<ItemInstallQueue.PendingInstallShortcutInfo> added = new ArrayList<ItemInstallQueue.PendingInstallShortcutInfo>();
+            synchronized (this) {
+                for (LauncherActivityInfo appinfo : apps) {
+                    ItemInstallQueue.PendingInstallShortcutInfo pendingInstallShortcutInfo = new ItemInstallQueue.PendingInstallShortcutInfo(appinfo.getComponentName().getPackageName(), appinfo.getUser());
+                    added.add(pendingInstallShortcutInfo);
+                    iteminfo_list .add(pendingInstallShortcutInfo.getItemInfo(context));
+                }
+            }
+
+            if (!added.isEmpty()) {
+                LauncherAppState.getInstance(context).getModel().addAndBindAddedWorkspaceItems(iteminfo_list);
+            }
+        }
+    }
+
+
 }

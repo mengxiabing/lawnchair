@@ -32,6 +32,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Log;
 import android.content.pm.PackageManager;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -42,6 +43,7 @@ import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.icons.IconCache;
 import com.android.launcher3.logging.FileLog;
+import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
@@ -218,6 +220,9 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
         }
 
         bindApplicationsIfNeeded();
+        // --------新增的方法start--------
+        updateToWorkSpace(context, app, appsList);
+        // --------end------------------
 
         final IntSet removedShortcuts = new IntSet();
         // Shortcuts to keep even if the corresponding app was removed
@@ -415,4 +420,28 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
         }
         return false;
     }
+
+    public void updateToWorkSpace(Context context, LauncherAppState app , AllAppsList appsList){
+        ArrayList<Pair<ItemInfo, Object>> iteminfo_queue = new ArrayList<>();
+        final List<UserHandle> profiles = UserCache.INSTANCE.get(context).getUserProfiles();
+        ArrayList<ItemInstallQueue.PendingInstallShortcutInfo> added = new ArrayList<ItemInstallQueue.PendingInstallShortcutInfo>();
+        for (UserHandle user : profiles) {
+            final List<LauncherActivityInfo> applications = context.getSystemService(LauncherApps.class).getActivityList(null, user);
+            synchronized (this) {
+                for (LauncherActivityInfo info : applications) {
+                    for (AppInfo appInfo : appsList.data) {
+                        if(info.getComponentName().equals(appInfo.componentName)){
+                            ItemInstallQueue.PendingInstallShortcutInfo mPendingInstallShortcutInfo =  new ItemInstallQueue.PendingInstallShortcutInfo(info.getComponentName().getPackageName(), info.getUser());
+                            added.add(mPendingInstallShortcutInfo);
+                            iteminfo_queue.add(mPendingInstallShortcutInfo.getItemInfo(context));
+                        }
+                    }
+                }
+            }
+        }
+        if (!added.isEmpty()) {
+            LauncherAppState.getInstance(context).getModel().addAndBindAddedWorkspaceItems(iteminfo_queue);
+        }
+    }
+
 }
