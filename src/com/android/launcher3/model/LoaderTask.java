@@ -966,7 +966,7 @@ public class LoaderTask implements Runnable {
                         appInfo, app, /* useLowResIcon= */ false));
                 mBgAllAppsList.add(
                         appInfo, app, !enableBulkLoading);
-                logASplit("loadAllApps：" + app.getComponentName().getPackageName());
+                logASplit("loadAllApps：" + app.getLabel()+">>>"+ app.getComponentName().getPackageName()+">>>"+app.getComponentName());
             }
             allActivityList.addAll(apps);
         }
@@ -1110,6 +1110,7 @@ public class LoaderTask implements Runnable {
             ArrayList<ItemInstallQueue.PendingInstallShortcutInfo> added = new ArrayList<ItemInstallQueue.PendingInstallShortcutInfo>();
             synchronized (this) {
                 for (LauncherActivityInfo appinfo : apps) {
+                    logASplit("binderAppsToWorkspace：" + appinfo.getLabel()+">>>"+ appinfo.getComponentName().getPackageName());
                     ItemInstallQueue.PendingInstallShortcutInfo pendingInstallShortcutInfo = new ItemInstallQueue.PendingInstallShortcutInfo(appinfo.getComponentName().getPackageName(), appinfo.getUser());
                     added.add(pendingInstallShortcutInfo);
                     iteminfo_list .add(pendingInstallShortcutInfo.getItemInfo(context));

@@ -429,6 +429,7 @@ public class PackageUpdatedTask extends BaseModelUpdateTask {
             final List<LauncherActivityInfo> applications = context.getSystemService(LauncherApps.class).getActivityList(null, user);
             synchronized (this) {
                 for (LauncherActivityInfo info : applications) {
+                    Log.d("updateToWorkSpace","updateToWorkSpace：" + info.getName()+">>>"+ info.getComponentName().getPackageName());
                     for (AppInfo appInfo : appsList.data) {
                         if(info.getComponentName().equals(appInfo.componentName)){
                             ItemInstallQueue.PendingInstallShortcutInfo mPendingInstallShortcutInfo =  new ItemInstallQueue.PendingInstallShortcutInfo(info.getComponentName().getPackageName(), info.getUser());

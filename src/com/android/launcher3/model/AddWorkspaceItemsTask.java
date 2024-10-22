@@ -98,10 +98,10 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                     }
 
                     // b/139663018 Short-circuit this logic if the icon is a system app
-                    if (PackageManagerHelper.isSystemApp(app.getContext(),
+                    /*if (PackageManagerHelper.isSystemApp(app.getContext(),
                             Objects.requireNonNull(item.getIntent()))) {
                         continue;
-                    }
+                    }*/
                 }
 
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
