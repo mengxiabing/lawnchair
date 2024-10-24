@@ -102,6 +102,10 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                             Objects.requireNonNull(item.getIntent()))) {
                         continue;
                     }*/
+                    //排除黑名单应用
+                    if (PackageManagerHelper.isBlackListApp(app.getContext(), item.getTargetComponent().getPackageName())) {
+                        continue;
+                    }
                 }
 
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {

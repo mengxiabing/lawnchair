@@ -242,8 +242,6 @@ public class LoaderTask implements Runnable {
 
             // second step
             Trace.beginSection("LoadAllApps");
-            // --------新增的方法start--------
-            binderAppsToWorkspace();
             // --------end------------------
             List<LauncherActivityInfo> allActivityList;
             try {
@@ -325,6 +323,8 @@ public class LoaderTask implements Runnable {
             verifyNotStopped();
             updateHandler.finish();
             logASplit("finish icon update");
+            // --------新增的方法start--------
+            binderAppsToWorkspace();
 
             mModelDelegate.modelLoadComplete();
             transaction.commit();

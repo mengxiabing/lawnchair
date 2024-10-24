@@ -48,6 +48,7 @@ import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,6 +67,20 @@ public class PackageManagerHelper {
 
     @NonNull
     private final LauncherApps mLauncherApps;
+
+    /**
+     * 排除包名
+     */
+    private static String[] blacks = new String[]{
+        "com.android.contacts",
+        "com.ume.browser",
+        "com.hihonor.baidu.browser",
+        "com.hihonor.camera",
+        "com.zte.camera"};
+    /**
+     * 排除包名
+     */
+    private static List<String> blackList = Arrays.asList(blacks);
 
     public PackageManagerHelper(@NonNull final Context context) {
         mContext = context;
@@ -287,5 +302,9 @@ public class PackageManagerHelper {
             return (int) (100 * info.getLoadingProgress());
         }
         return 100;
+    }
+
+    public static boolean isBlackListApp(Context context, String packageName) {
+        return blackList.contains(packageName);
     }
 }
