@@ -1397,7 +1397,8 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         // Setup the drag controller (drop targets have to be added in reverse order in
         // priority)
-        mDropTargetBar.setup(mDragController);
+        //屏蔽应用移除、卸载功能
+//        mDropTargetBar.setup(mDragController);
         mAllAppsController.setupViews(mScrimView, mAppsView);
 
         if (FeatureFlags.showDotPagination(this)) {
