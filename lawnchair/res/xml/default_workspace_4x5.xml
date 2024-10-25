@@ -69,6 +69,16 @@
         <favorite launcher:uri="#Intent;action=android.intent.action.CAMERA_BUTTON;end" />
     </resolve>
 
+    <!--<resolve
+        launcher:container="-101"
+        launcher:screen="3"
+        launcher:x="3"
+        launcher:y="0" >
+        <favorite
+            launcher:className="com.telecomyt.visualcommand.login.ui.WelcomeActivity"
+            launcher:packageName="com.telecomyt.visualcommand.main" />
+    </resolve>-->
+
     <!-- Screen 0 -->
 
     <!-- Google folder -->
@@ -107,7 +117,7 @@
             launcher:className="com.google.android.apps.photos.home.HomeActivity"/>
     </folder>-->
 
-    <resolve
+    <!--<resolve
         launcher:screen="0"
         launcher:x="3"
         launcher:y="-1">
@@ -116,7 +126,7 @@
             launcher:packageName="com.android.vending" />
         <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MARKET;end" />
         <favorite launcher:uri="market://details?id=com.android.launcher" />
-    </resolve>
+    </resolve>-->
 
     <!-- Screen 1 -->
 
@@ -136,7 +146,7 @@
         <favorite launcher:uri="#Intent;type=images/*;end" />
     </resolve>
 
-    <resolve
+    <!--<resolve
         launcher:screen="1"
         launcher:x="3"
         launcher:y="-1">
@@ -144,6 +154,6 @@
         <favorite
             launcher:className="com.android.settings.Settings"
             launcher:packageName="com.android.settings" />
-    </resolve>
+    </resolve>-->
 
 </favorites>

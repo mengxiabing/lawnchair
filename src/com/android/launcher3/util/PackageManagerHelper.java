@@ -72,7 +72,9 @@ public class PackageManagerHelper {
      * 排除包名
      */
     private static String[] blacks = new String[]{
+        "com.android.settings",
         "com.android.contacts",
+        "com.hihonor.contacts",
         "com.ume.browser",
         "com.hihonor.baidu.browser",
         "com.hihonor.camera",
