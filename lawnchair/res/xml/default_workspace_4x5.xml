@@ -51,22 +51,23 @@
         <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_CONTACTS;end" />
     </resolve>-->
 
-    <resolve
+    <!--<resolve
          launcher:container="-101"
          launcher:screen="2"
          launcher:x="2"
          launcher:y="0" >
         <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_BROWSER;end" />
         <favorite launcher:uri="http://www.example.com/" />
-    </resolve>
+    </resolve>-->
 
     <resolve
         launcher:container="-101"
-        launcher:screen="3"
-        launcher:x="3"
+        launcher:screen="2"
+        launcher:x="2"
         launcher:y="0" >
-        <favorite launcher:uri="#Intent;action=android.media.action.STILL_IMAGE_CAMERA;end" />
-        <favorite launcher:uri="#Intent;action=android.intent.action.CAMERA_BUTTON;end" />
+        <favorite
+            launcher:className="com.telecomyt.portal.fusion.ui.welcome.WelcomeActivity"
+            launcher:packageName="com.telecomyt.portal.fusion" />
     </resolve>
 
     <!--<resolve
@@ -74,10 +75,19 @@
         launcher:screen="3"
         launcher:x="3"
         launcher:y="0" >
-        <favorite
-            launcher:className="com.telecomyt.visualcommand.login.ui.WelcomeActivity"
-            launcher:packageName="com.telecomyt.visualcommand.main" />
+        <favorite launcher:uri="#Intent;action=android.media.action.STILL_IMAGE_CAMERA;end" />
+        <favorite launcher:uri="#Intent;action=android.intent.action.CAMERA_BUTTON;end" />
     </resolve>-->
+
+    <resolve
+        launcher:container="-101"
+        launcher:screen="3"
+        launcher:x="3"
+        launcher:y="0" >
+        <favorite
+            launcher:className="com.telecomyt.portal.message.center.activity.ChangeModelLifeWorkActivity"
+            launcher:packageName="com.telecomyt.portal.message.center" />
+    </resolve>
 
     <!-- Screen 0 -->
 
