@@ -959,6 +959,13 @@ public class LoaderTask implements Runnable {
             boolean quietMode = mUserManagerState.isUserQuiet(user);
             // Create the ApplicationInfos
             for (int i = 0; i < apps.size(); i++) {
+                if (PackageManagerHelper.isBlackListApp(mApp.getContext(), apps.get(i).getComponentName().getPackageName())) {
+                    LauncherAppState.getInstance(mApp.getContext()).getModel().onPackageRemoved(apps.get(i).getComponentName().getPackageName(),user);
+                    LauncherAppState.getInstance(mApp.getContext()).getModel().onPackagesUnavailable(
+                        (apps.get(i).getComponentName().getPackageName().split("")),
+                        user, false);
+                    continue;
+                }
                 LauncherActivityInfo app = apps.get(i);
                 AppInfo appInfo = new AppInfo(app, user, quietMode);
 

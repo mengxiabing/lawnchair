@@ -73,16 +73,24 @@ public class PackageManagerHelper {
      */
     private static String[] blacks = new String[]{
         "com.android.settings",
-        "com.android.contacts",
-        "com.hihonor.contacts",
         "com.ume.browser",
         "com.hihonor.baidu.browser",
         "com.hihonor.camera",
         "com.zte.camera"};
     /**
+     * 排除包名-不删除缓存
+     */
+    private static String[] blacksNotDelete = new String[]{
+        "com.android.contacts",
+        "com.hihonor.contacts"};
+    /**
      * 排除包名
      */
     private static List<String> blackList = Arrays.asList(blacks);
+    /**
+     * 排除包名-不删除缓存
+     */
+    private static List<String> blackListNotDelete = Arrays.asList(blacksNotDelete);
 
     public PackageManagerHelper(@NonNull final Context context) {
         mContext = context;
@@ -308,5 +316,8 @@ public class PackageManagerHelper {
 
     public static boolean isBlackListApp(Context context, String packageName) {
         return blackList.contains(packageName);
+    }
+    public static boolean isBlackListAppNotDelete(Context context, String packageName) {
+        return blackListNotDelete.contains(packageName);
     }
 }

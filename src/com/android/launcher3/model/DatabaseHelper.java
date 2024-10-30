@@ -71,7 +71,7 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
      * When increasing the scheme version, ensure that downgrade_schema.json is
      * updated
      */
-    public static final int SCHEMA_VERSION = 32;
+    public static final int SCHEMA_VERSION = 33;
     private static final String TAG = "DatabaseHelper";
     private static final boolean LOGD = false;
 
@@ -281,6 +281,13 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
             }
             // Fall through
             case 32: {
+                // DB Upgraded successfully
+                Log.d(TAG, "Destroying all old data: " + oldVersion);
+                createEmptyDB(db);
+                return;
+            }
+            // Fall through
+            case 33: {
                 // DB Upgraded successfully
                 return;
             }

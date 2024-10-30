@@ -92,6 +92,17 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
             for (Pair<ItemInfo, Object> entry : mItemList) {
                 ItemInfo item = entry.first;
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
+                    //排除黑名单应用
+                    if (PackageManagerHelper.isBlackListAppNotDelete(app.getContext(), item.getTargetComponent().getPackageName())) {
+                        continue;
+                    }
+                    if (PackageManagerHelper.isBlackListApp(app.getContext(), item.getTargetComponent().getPackageName())) {
+//                        LauncherAppState.getInstance(app.getContext()).getModel().onPackageRemoved(item.getTargetComponent().getPackageName(),item.user);
+//                        LauncherAppState.getInstance(app.getContext()).getModel().onPackagesUnavailable(
+//                            (item.getTargetComponent().getPackageName().split("")),
+//                            item.user, false);
+                        continue;
+                    }
                     // Short-circuit this logic if the icon exists somewhere on the workspace
                     if (shortcutExists(dataModel, item.getIntent(), item.user)) {
                         continue;
@@ -102,10 +113,6 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                             Objects.requireNonNull(item.getIntent()))) {
                         continue;
                     }*/
-                    //排除黑名单应用
-                    if (PackageManagerHelper.isBlackListApp(app.getContext(), item.getTargetComponent().getPackageName())) {
-                        continue;
-                    }
                 }
 
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
