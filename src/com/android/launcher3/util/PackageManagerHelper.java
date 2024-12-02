@@ -84,6 +84,17 @@ public class PackageManagerHelper {
         "com.android.contacts",
         "com.hihonor.contacts"};
     /**
+     * 白名单
+     */
+    private static String[] whites = new String[]{
+        "com.android.contacts",
+        "com.hihonor.contacts",
+        "com.android.messaging",
+        "com.telecomyt.portal.fusion",
+        "com.telecomyt.portal.message.center",
+        "com.android.gallery3d",
+        "com.hihonor.HnMultiScreenShot"};
+    /**
      * 排除包名
      */
     private static List<String> blackList = Arrays.asList(blacks);
@@ -91,6 +102,10 @@ public class PackageManagerHelper {
      * 排除包名-不删除缓存
      */
     private static List<String> blackListNotDelete = Arrays.asList(blacksNotDelete);
+    /**
+     * 白名单
+     */
+    private static List<String> whiteList = Arrays.asList(whites);
 
     public PackageManagerHelper(@NonNull final Context context) {
         mContext = context;
@@ -319,5 +334,8 @@ public class PackageManagerHelper {
     }
     public static boolean isBlackListAppNotDelete(Context context, String packageName) {
         return blackListNotDelete.contains(packageName);
+    }
+    public static boolean isWhite(String packageName) {
+        return whiteList.contains(packageName);
     }
 }

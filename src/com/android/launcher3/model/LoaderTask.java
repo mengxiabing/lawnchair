@@ -30,6 +30,8 @@ import static com.android.launcher3.util.PackageManagerHelper.hasShortcutsPermis
 import static com.android.launcher3.util.PackageManagerHelper.isSystemApp;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
@@ -42,6 +44,7 @@ import android.content.pm.PackageInstaller.SessionInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Trace;
 import android.os.UserHandle;
@@ -151,6 +154,10 @@ public class LoaderTask implements Runnable {
     private final Set<PackageUserKey> mPendingPackages = new HashSet<>();
     private boolean mItemsDeleted = false;
     private String mDbName;
+    //锁定模式
+    private DevicePolicyManager dpm;
+    //是否运行在锁定模式
+    boolean isLockTaskModeRunning = false;
 
     public LoaderTask(@NonNull LauncherAppState app, AllAppsList bgAllAppsList, BgDataModel bgModel,
             ModelDelegate modelDelegate, @NonNull LauncherBinder launcherBinder) {
@@ -165,6 +172,35 @@ public class LoaderTask implements Runnable {
         mUserCache = UserCache.INSTANCE.get(mApp.getContext());
         mSessionHelper = InstallSessionHelper.INSTANCE.get(mApp.getContext());
         mIconCache = mApp.getIconCache();
+        initDevicePolicyManager();
+        initLockTaskMode();
+    }
+    
+    private void initDevicePolicyManager(){
+        dpm = (DevicePolicyManager) mApp.getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
+    }
+    
+    private boolean isLockTaskPermitted(String pkg){
+        if (dpm != null) {
+            logASplit("isLockTaskPermitted:"+pkg+">>>"+dpm.isLockTaskPermitted(pkg));
+            return dpm.isLockTaskPermitted(pkg);
+        } else {
+            logASplit("isLockTaskPermitted: dpm is null");
+            return false;
+        } 
+    }
+    
+    private void initLockTaskMode(){
+        ActivityManager activityManager = (ActivityManager)
+            mApp.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            isLockTaskModeRunning = activityManager.getLockTaskModeState()
+                == ActivityManager.LOCK_TASK_MODE_LOCKED;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Deprecated in API level 23.
+            isLockTaskModeRunning = activityManager.isInLockTaskMode();
+        }
+        logASplit("initLockTaskMode:"+isLockTaskModeRunning);
     }
 
     protected synchronized void waitForIdle() {
@@ -521,6 +557,15 @@ public class LoaderTask implements Runnable {
 
                     if (TextUtils.isEmpty(targetPkg)) {
                         c.markDeleted("Shortcuts can't have null package");
+                        return;
+                    }
+
+                    //锁定任务模式
+                    if (intent != null 
+                        && cn != null 
+                        && isLockTaskModeRunning 
+                        && !isLockTaskPermitted(cn.getPackageName()) 
+                        && !PackageManagerHelper.isWhite(cn.getPackageName())) {
                         return;
                     }
 
@@ -959,13 +1004,13 @@ public class LoaderTask implements Runnable {
             boolean quietMode = mUserManagerState.isUserQuiet(user);
             // Create the ApplicationInfos
             for (int i = 0; i < apps.size(); i++) {
-                if (PackageManagerHelper.isBlackListApp(mApp.getContext(), apps.get(i).getComponentName().getPackageName())) {
+                /*if (PackageManagerHelper.isBlackListApp(mApp.getContext(), apps.get(i).getComponentName().getPackageName())) {
                     LauncherAppState.getInstance(mApp.getContext()).getModel().onPackageRemoved(apps.get(i).getComponentName().getPackageName(),user);
                     LauncherAppState.getInstance(mApp.getContext()).getModel().onPackagesUnavailable(
                         (apps.get(i).getComponentName().getPackageName().split("")),
                         user, false);
                     continue;
-                }
+                }*/
                 LauncherActivityInfo app = apps.get(i);
                 AppInfo appInfo = new AppInfo(app, user, quietMode);
 
@@ -1117,6 +1162,10 @@ public class LoaderTask implements Runnable {
             ArrayList<ItemInstallQueue.PendingInstallShortcutInfo> added = new ArrayList<ItemInstallQueue.PendingInstallShortcutInfo>();
             synchronized (this) {
                 for (LauncherActivityInfo appinfo : apps) {
+                    //锁定任务模式
+                    if (isLockTaskModeRunning && !isLockTaskPermitted(appinfo.getComponentName().getPackageName())) {
+                        continue;
+                    }
                     logASplit("binderAppsToWorkspace：" + appinfo.getLabel()+">>>"+ appinfo.getComponentName().getPackageName());
                     ItemInstallQueue.PendingInstallShortcutInfo pendingInstallShortcutInfo = new ItemInstallQueue.PendingInstallShortcutInfo(appinfo.getComponentName().getPackageName(), appinfo.getUser());
                     added.add(pendingInstallShortcutInfo);

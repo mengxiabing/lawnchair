@@ -60,7 +60,8 @@
             android:resumeWhilePausing="true"
             android:taskAffinity=""
             android:exported="true"
-            android:enabled="true">
+            android:enabled="true"
+            android:lockTaskMode="if_whitelisted">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SHOW_WORK_APPS" />

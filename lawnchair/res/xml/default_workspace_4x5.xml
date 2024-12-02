@@ -149,11 +149,19 @@
     </resolve>
 
     <resolve
-        launcher:screen="1"
-        launcher:x="1"
+        launcher:screen="0"
+        launcher:x="2"
         launcher:y="-1" >
         <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_GALLERY;end" />
         <favorite launcher:uri="#Intent;type=images/*;end" />
+    </resolve>
+    <resolve
+        launcher:screen="0"
+        launcher:x="3"
+        launcher:y="-1" >
+        <favorite
+            launcher:className="com.android.systemui.flashlight.FlashlightActivity"
+            launcher:packageName="com.hihonor.HnMultiScreenShot" />
     </resolve>
 
     <!--<resolve
